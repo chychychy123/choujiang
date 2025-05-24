@@ -1,0 +1,24 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: user-service # 服务名称
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:mysql://192.168.72.148:3307/crud?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123
+mybatis-plus:
+  type-aliases-package: org.chy.crud.pojo
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: #配置逻辑删除字段
+hm:
+  jwt:
+    location: classpath:hmall.jks
+    alias: hmall
+    password: hmall123
+    tokenTTL: 30m
