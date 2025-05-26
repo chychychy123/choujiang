@@ -68,7 +68,7 @@ public class UserLogin  {
         this.createTime = createTime;
         this.updateTime = updateTime;
         this.status = status;
-        this.balance = balance;
+
     }
 
     /**
