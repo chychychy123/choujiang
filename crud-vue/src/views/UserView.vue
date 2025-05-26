@@ -50,13 +50,7 @@
         </tbody>
       </table>
       <!-- 中奖弹窗 -->
-      <div v-if="showPrizeDialog" class="dialog-overlay">
-        <div class="prize-dialog">
-          <h3>恭喜中奖!</h3>
-          <p>您获得了: <strong>{{ prizeResult }}</strong></p>
-          <button @click="closeDialog">确定</button>
-        </div>
-      </div>
+
     </div>
   </div>
 </template>

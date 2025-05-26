@@ -3,46 +3,66 @@ package org.chy.crud.service.impl;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.chy.crud.exception.BadRequestException;
 import org.chy.crud.mapper.AwardMapper;
 
+import org.chy.crud.mapper.AwardRecordMapper;
 import org.chy.crud.pojo.Award;
+import org.chy.crud.pojo.AwardRecord;
+import org.chy.crud.pojo.UserLogin;
+import org.chy.crud.service.AwardRecordService;
 import org.chy.crud.service.AwardService;
+import org.chy.crud.service.UserLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AwardServiceImpl extends ServiceImpl<AwardMapper, Award> implements AwardService {
 
     private final Random random = new Random();
-
+    private final UserLoginService userLoginService; // 用于获取用户信息、
+    private final AwardRecordMapper awardRecordMapper;
     @Override
     public List<Award> showAward() {
         return baseMapper.selectList(null);
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public String draw() {
-        // 1. 查询所有还有库存的奖项
-        List<Award> availableAwards = lambdaQuery()
-                .gt(Award::getQuantity, 0)
-                .list();
+    public String draw(Long userId) {
+        try {
+            log.info("开始处理用户{}的抽奖请求", userId);
+            
+            // 1. 获取当前用户信息
+            UserLogin user = userLoginService.query(userId);
+            log.info("查询到的用户信息: {}", user);
+            if (user == null) {
+                log.warn("用户{}不存在", userId);
+                throw new BadRequestException("用户不存在");
+            }
 
-        if (CollectionUtils.isEmpty(availableAwards)) {
-            return "奖品已抽完";
-        }
+            // 2. 查询可用奖品
+            List<Award> availableAwards = lambdaQuery()
+                    .gt(Award::getQuantity, 0)
+                    .list();
+            log.info("当前可用奖品列表: {}", availableAwards);
 
-        // 2. 计算总权重（剩余数量总和）
+            if (CollectionUtils.isEmpty(availableAwards)) {
+                log.warn("没有可用奖品");
+                return "奖品已抽完";
+            }
+
         int totalWeight = availableAwards.stream()
                 .mapToInt(Award::getQuantity)
                 .sum();
 
-        // 3. 生成随机数并确定中奖项
         int randomNum = random.nextInt(totalWeight) + 1;
         int accumulatedWeight = 0;
         Award selectedAward = null;
@@ -55,7 +75,7 @@ public class AwardServiceImpl extends ServiceImpl<AwardMapper, Award> implements
             }
         }
 
-        // 4. 扣减库存
+        // 3. 扣减库存
         if (selectedAward != null) {
             boolean success = lambdaUpdate()
                     .eq(Award::getId, selectedAward.getId())
@@ -64,10 +84,25 @@ public class AwardServiceImpl extends ServiceImpl<AwardMapper, Award> implements
                     .update();
 
             if (success) {
-                return "恭喜抽到"+selectedAward.getName() + ":" + selectedAward.getPrize()+"!";
+                // 4. 插入中奖记录
+                AwardRecord awardRecord = new AwardRecord();
+                awardRecord.setUserId(userId);
+                awardRecord.setUserName(user.getUsername());
+                awardRecord.setAwardId(selectedAward.getId().intValue());
+                awardRecord.setAwardName(selectedAward.getName());
+                awardRecord.setPrize(selectedAward.getPrize());
+                awardRecord.setCreateTime(LocalDateTime.now());
+
+                awardRecordMapper.insert(awardRecord);
+
+                return "恭喜" + user.getUsername() + "抽到" +
+                        selectedAward.getName() + ":" + selectedAward.getPrize() + "!";
             }
         }
-
         return "抽奖失败，请重试";
+        } catch (Exception e) {
+            log.error("抽奖过程发生错误: {}", e.getMessage(), e);
+            throw e;
+        }
     }
 }

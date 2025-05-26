@@ -46,6 +46,12 @@ public class JwtTool {
         if (token == null) {
             throw new UnauthorizedException("未登录");
         }
+        
+        // 添加Bearer前缀处理
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        
         // 2.校验并解析jwt
         JWT jwt;
         try {
@@ -78,5 +84,9 @@ public class JwtTool {
             // 数据格式有误
             throw new UnauthorizedException("无效的token");
         }
+    }
+
+    public Long parseTokenToUserId(String token) {
+        return parseToken(token);
     }
 }

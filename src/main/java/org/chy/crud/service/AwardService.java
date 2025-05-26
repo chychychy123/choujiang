@@ -8,5 +8,6 @@ public interface AwardService {
 
     List<Award> showAward();
 
-    String draw();
+
+    String draw(Long userId);
 }
