@@ -7,5 +7,5 @@ import org.chy.crud.pojo.AwardRecord;
 import java.util.List;
 
 public interface AwardRecordMapper extends BaseMapper<AwardRecord> {
-    List<AwardRecord> selectAwardRecord(Integer userId);
+    List<AwardRecord> selectAwardRecord(Long userId);
 }

@@ -13,7 +13,7 @@ import java.util.List;
 public class AwardRecordServiceImpl extends ServiceImpl<AwardRecordMapper, AwardRecord> implements AwardRecordService {
     //根据用户userid展示中奖信息
     @Override
-    public List<AwardRecord> showAward(Integer userId) {
+    public List<AwardRecord> showAward(Long userId) {
         return baseMapper.selectAwardRecord(userId);
     }
 

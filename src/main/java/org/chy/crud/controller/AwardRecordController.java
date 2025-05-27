@@ -17,8 +17,8 @@ public class AwardRecordController {
     @Autowired
     private AwardRecordService  awardRecordService;
     //根据用户userid展示中奖信息
-    @GetMapping("/showAward")
-    public List<AwardRecord> showAward(Integer userId){
+    @GetMapping("/showUserAward")
+    public List<AwardRecord> showUserAward(Long userId){
         List<AwardRecord> awardRecord=awardRecordService.showAward(userId);
         return awardRecord;
     }

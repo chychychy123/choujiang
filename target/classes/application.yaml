@@ -22,3 +22,10 @@ hm:
     alias: hmall
     password: hmall123
     tokenTTL: 30m
+# 在已有配置下添加：
+logging:
+  level:
+    org.chy.crud: DEBUG
+    org.springframework.web: INFO
+  file:
+    name: logs/award-service.log

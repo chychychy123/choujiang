@@ -4,7 +4,7 @@
 
 
     <select id="selectAwardRecord" resultType="org.chy.crud.pojo.AwardRecord"
-            parameterType="java.lang.Integer">
+            parameterType="java.lang.Long">
         select * from award_record where user_id = #{userId}
     </select>
 </mapper>

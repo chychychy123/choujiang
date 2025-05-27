@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface AwardRecordService {
 
-    List<AwardRecord> showAward(Integer userId);
+    List<AwardRecord> showAward(Long userId);
 }

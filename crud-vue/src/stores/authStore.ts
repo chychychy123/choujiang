@@ -1,10 +1,9 @@
-// src/stores/authStore.ts
 import { defineStore } from 'pinia'
-
-import {userApi} from '@/api/userApi'
+import { userApi } from '@/api/userApi'
 
 interface User {
     username: string
+    id: number
 }
 
 export const useAuthStore = defineStore('auth', {
@@ -14,37 +13,43 @@ export const useAuthStore = defineStore('auth', {
     }),
 
     actions: {
-        // 新增初始化方法
+        async loginC(credentials: { username: string; password: string }) {
+            const response = await userApi.login(credentials)
+            const data = response.data
+
+            const tokenPayload = data.token.split('.')[1]
+            const decodedPayload = JSON.parse(atob(tokenPayload))
+            const userId = decodedPayload.user
+
+            this.currentUser = {
+                username: data.username,
+                id: userId
+            }
+            this.token = data.token
+            
+            // 修复：添加userId到localStorage
+            localStorage.setItem('auth', JSON.stringify({
+                user: {
+                    username: data.username,
+                    id: userId // 新增用户ID存储
+                },
+                token: this.token
+            }))
+        },
+
         initialize() {
             const auth = localStorage.getItem('auth')
             if (auth) {
                 const { user, token } = JSON.parse(auth)
-                this.currentUser = user
+                
+                this.currentUser = {
+                    username: user.username,
+                    id: user.id
+                }
+                
                 this.token = token
             }
-        },
-
-        // 修改登录方法
-        async loginC(credentials: { username: string; password: string }) {
-            // const response = await fetch('/users/login', {
-            //     method: 'POST',
-            //     body: JSON.stringify(credentials)
-            // })
-
-            const response = await userApi.login(credentials)
-            const data = response.data
-
-            // ✅ 正确赋值方式（保持对象结构）
-            this.currentUser = {
-                username: data.username // 将字符串包装为对象
-            }
-
-            this.token = data.token
-            localStorage.setItem('auth', JSON.stringify({
-                user: this.currentUser, // 存储完整对象
-                token: this.token
-            }))
-        },
+        },  // ← Add this comma
 
         logout() {
             this.$reset()
@@ -53,6 +58,6 @@ export const useAuthStore = defineStore('auth', {
     },
 
     getters: {
-        isAuthenticated: (state) => !!state.token
+        isAuthenticated: (state) => !!state.currentUser
     }
 })

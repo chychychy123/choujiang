@@ -50,6 +50,17 @@ const isValidToken = () => {
     }
 }
 
+// 添加中奖记录的类型定义
+export interface AwardRecord {
+    id: number
+    userId: string  // 修改为string类型以适配Java Long
+    userName: string
+    awardId: number
+    awardName: string
+    prize: string
+    createTime: string
+}
+
 export const awardApi = {
     async getAwards(): Promise<Award[]> {
         try {
@@ -107,6 +118,42 @@ export const awardApi = {
                 success: false,
                 message: error instanceof Error ? error.message : '抽奖失败，请稍后重试'
             }
+        }
+    },
+    
+    // 获取用户中奖记录
+    getUserAwardRecords: async (): Promise<AwardRecord[]> => {
+        try {
+            const authStr = localStorage.getItem('auth')
+
+            if (!authStr) {
+                console.log('localStorage中没有auth数据，返回空数组。') // 新增日志
+                return [] 
+            }
+            const auth = JSON.parse(authStr)
+            // 从解析后的auth对象中获取userId，并确保其类型为number
+            const userId = auth.user && auth.user.id ? Number(auth.user.id) : undefined; // 修改这里
+            
+            console.log('从localStorage解析出的userId:', userId); // 修改这里，使用新的userId变量
+
+            // 确保有userId
+            if (!userId) { // 修改这里，使用新的userId变量
+                console.error('未找到用户ID')
+                return []
+            }
+    
+            console.log('发送请求到/award/showUserAward，参数userId:', userId); // 修改这里，使用新的userId变量
+            const response = await api.get(`/award/showUserAward`, {
+                params: {
+                    userId: userId // 修改这里，使用新的userId变量
+                }
+            })
+            console.log('中奖记录响应:', response.data)
+            return Array.isArray(response.data) ? response.data : []
+    
+        } catch (error) {
+            console.error('获取中奖记录失败:', error)
+            return []
         }
     }
 }

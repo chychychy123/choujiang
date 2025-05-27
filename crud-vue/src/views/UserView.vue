@@ -52,117 +52,188 @@
       <!-- 中奖弹窗 -->
 
     </div>
+    <!-- 在奖项表格后添加中奖记录表格 -->
+    <div class="award-records">
+        <h2>我的中奖记录</h2>
+        <table class="award-record-table">
+            <thead>
+                <tr>
+                    <th>奖项名称</th>
+                    <th>奖品内容</th>
+                    <th>中奖时间</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="record in awardRecords" :key="record.id">
+                    <td>{{ record.awardName }}</td>
+                    <td>{{ record.prize }}</td>
+                    <td>{{ formatDateTime(record.createTime) }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue';
+<script setup lang="ts">
+import { ref, onMounted, Ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
-import { awardApi, type Award, type DrawResult } from '@/api/awardApi';
+import { awardApi } from '@/api/awardApi';
+import type { Award, AwardRecord } from '@/types/award';
 
-export default defineComponent({
-  name: 'UserView',
-  setup() {
-    const router = useRouter();
-    const authStore = useAuthStore();
-    const awards = ref<Award[]>([]);
-    const isDrawing = ref(false);
-    const drawResult = ref<string | null>(null);
-    const isLoading = ref(false);
-    const error = ref<string | null>(null);
-    const showPrizeDialog = ref(false)
-    const prizeResult = ref('')
-    // 获取奖项列表
-    const fetchAwards = async () => {
-      isLoading.value = true;
-      error.value = null;
-      try {
-        awards.value = await awardApi.getAwards();
-      } catch (err) {
-        error.value = '获取奖项列表失败，请刷新重试';
-        console.error(err);
-      } finally {
-        isLoading.value = false;
-      }
-    };
-    // 加载奖项
-    const loadAwards = async () => {
-      try {
+const router = useRouter();
+const authStore = useAuthStore();
+const awards = ref<Award[]>([])
+const isDrawing = ref(false)
+const drawResult = ref<string | null>(null)
+const isLoading = ref(false)
+const error = ref<string | null>(null)
+const showPrizeDialog = ref(false)
+const prizeResult = ref<string | undefined>(undefined) // 统一类型并初始化为 undefined
+
+const awardRecords = ref<AwardRecord[]>([])
+
+// 格式化日期时间
+const formatDateTime = (dateTimeStr: string) => {
+    const date = new Date(dateTimeStr)
+    return date.toLocaleString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    })
+}
+
+// 获取奖项列表
+const fetchAwards = async () => {
+    isLoading.value = true
+    error.value = null
+    try {
         awards.value = await awardApi.getAwards()
-      } catch (error) {
+        console.log("获取成功",awards.value)
+    } catch (err) {
+        error.value = '获取奖项列表失败，请刷新重试'
+        console.error(err)
+    } finally {
+        isLoading.value = false
+    }
+}
+
+// 加载奖项
+const loadAwards = async () => {
+    try {
+        awards.value = await awardApi.getAwards()
+    } catch (error) {
         console.error('加载奖项失败:', error)
-      }
     }
-    // 执行抽奖
-    const handleDraw = async () => {
-      isDrawing.value = true;
-      showPrizeDialog.value = false;
+}
 
-      try {
-        const result = await awardApi.draw();
-
-        // 安全访问message属性（关键修复）
-        const message = result.message || '';
-
-        // 中奖情况处理
-        if (result.success && (result.prize || message.includes('恭喜'))) {
-          prizeResult.value = result.prize ||
-              message.split('：')[1]?.replace('！', '') ||
-              '神秘奖品';
-          showPrizeDialog.value = true;
+// 获取中奖记录
+// 加载中奖记录
+const loadAwardRecords = async () => {
+    try {
+        if (!authStore.currentUser?.id) {
+            console.warn('用户未登录或无用户ID')
+            return
         }
-        // 未中奖情况
-        else {
-          alert(message || '很遗憾，您没有中奖');
+        const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('请求超时')), 10000)
+        })
+        const recordsPromise = awardApi.getUserAwardRecords()
+        // 添加类型断言
+        awardRecords.value = await Promise.race([recordsPromise, timeoutPromise]) as AwardRecord[]
+        console.log('成功获取获奖记录:', awardRecords.value); // 添加这行代码
+    } catch (err) {
+        // 添加错误类型检查
+        if (err instanceof Error) {
+            console.error('加载中奖记录失败:', err)
+            if (err.message === '请求超时') {
+                console.error('请求超时，请检查网络连接')
+            } else if (err.message.includes('401')) { // 示例：处理未授权错误
+                 console.error('用户未授权，请重新登录');
+                 // 可以选择在此处重定向到登录页
+                 // router.push('/home/login');
+            }
+        } else {
+            console.error('未知错误:', err)
         }
-
-        await loadAwards();
-
-      } catch (error) {
-        alert('网络错误，请检查连接');
-      } finally {
-        isDrawing.value = false;
-      }
-    };
-
-    // 关闭弹窗
-    const closeDialog = () => {
-      showPrizeDialog.value = false
     }
-    // 跳转到登录/注册
-    const goToLogin = () => router.push('/home/login');
-    const goToRegister = () => router.push('/home/register');
+}
 
-    // 初始化
-    onMounted(() => {
-      authStore.initialize();
-      fetchAwards();
-    });
+// 确保在组件挂载时加载记录
+onMounted(async () => {
+    await authStore.initialize() // 等待初始化完成
+    await fetchAwards()
+    if (authStore.isAuthenticated) {
+        await loadAwardRecords()
+    }
+})
 
-    return {
-      authStore,
-      awards,
-      isDrawing,
-      drawResult,
-      isLoading,
-      error,
-      handleDraw,
-      goToLogin,
-      goToRegister,
-      closeDialog,
-      showPrizeDialog,
-      prizeResult
-    };
-  },
-});
+// 执行抽奖
+const handleDraw = async () => {
+    if (!authStore.currentUser?.id) {
+        console.error('用户未登录或无用户ID')
+        prizeResult.value = '请先登录'
+        showPrizeDialog.value = true
+        return
+    }
+    
+    isDrawing.value = true
+    try {
+        const result = await awardApi.draw()
+        prizeResult.value = result.prize
+        showPrizeDialog.value = true
+        // 抽奖成功后刷新记录
+        await loadAwardRecords()
+        await loadAwards()
+    } catch (error) {
+        console.error('抽奖失败:', error)
+        prizeResult.value = '抽奖失败，请重试'
+        showPrizeDialog.value = true
+    } finally {
+        isDrawing.value = false
+    }
+}
+
+// 关闭弹窗
+const closeDialog = () => {
+    showPrizeDialog.value = false
+}
+
+// 跳转到登录/注册
+const goToLogin = () => router.push('/home/login')
+const goToRegister = () => router.push('/home/register')
+
 </script>
 
-
-
-
 <style scoped>
+.award-record-table{
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+.award-record-table th {
+  background-color: #1e88e5;
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 500;
+  color: white;
+  border-bottom: 1px solid #f0f0f0;
+}
 
+.award-record-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+}
+
+.award-record-table tr:hover td {
+  background-color: #fafafa;
+}
 .user-info {
   padding: 15px 20px;
   display: flex;
@@ -376,3 +447,4 @@ h1 {
 }
 
 </style>
+
