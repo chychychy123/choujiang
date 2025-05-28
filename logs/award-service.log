@@ -1,0 +1,54 @@
+2025-05-28 17:15:45.927  INFO 25228 --- [main] org.chy.crud.CrudApplication             : Starting CrudApplication using Java 17.0.10 on chy with PID 25228 (E:\Programer\IDEA\IdeaProjects\crud\target\classes started by chy in E:\Programer\IDEA\IdeaProjects\crud)
+2025-05-28 17:15:45.932 DEBUG 25228 --- [main] org.chy.crud.CrudApplication             : Running with Spring Boot v2.7.12, Spring v5.3.27
+2025-05-28 17:15:45.932  INFO 25228 --- [main] org.chy.crud.CrudApplication             : The following 1 profile is active: "dev"
+2025-05-28 17:15:46.255  WARN 25228 --- [main] o.m.s.mapper.ClassPathMapperScanner      : Skipping MapperFactoryBean with name 'awardMapper' and 'org.chy.crud.mapper.AwardMapper' mapperInterface. Bean already defined with the same name!
+2025-05-28 17:15:46.255  WARN 25228 --- [main] o.m.s.mapper.ClassPathMapperScanner      : Skipping MapperFactoryBean with name 'awardRecordMapper' and 'org.chy.crud.mapper.AwardRecordMapper' mapperInterface. Bean already defined with the same name!
+2025-05-28 17:15:46.256  WARN 25228 --- [main] o.m.s.mapper.ClassPathMapperScanner      : Skipping MapperFactoryBean with name 'userLoginMapper' and 'org.chy.crud.mapper.UserLoginMapper' mapperInterface. Bean already defined with the same name!
+2025-05-28 17:15:46.256  WARN 25228 --- [main] o.m.s.mapper.ClassPathMapperScanner      : Skipping MapperFactoryBean with name 'userMapper' and 'org.chy.crud.mapper.UserMapper' mapperInterface. Bean already defined with the same name!
+2025-05-28 17:15:46.256  WARN 25228 --- [main] o.m.s.mapper.ClassPathMapperScanner      : No MyBatis mapper was found in '[org.chy.crud.mapper]' package. Please check your configuration.
+2025-05-28 17:15:46.462  INFO 25228 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2025-05-28 17:15:46.472  INFO 25228 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-05-28 17:15:46.472  INFO 25228 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.75]
+2025-05-28 17:15:46.536  INFO 25228 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-05-28 17:15:46.537  INFO 25228 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 577 ms
+2025-05-28 17:15:47.216  INFO 25228 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2025-05-28 17:15:47.222  INFO 25228 --- [main] org.chy.crud.CrudApplication             : Started CrudApplication in 1.523 seconds (JVM running for 1.955)
+2025-05-28 17:15:53.806  INFO 25228 --- [http-nio-8080-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-28 17:15:53.806  INFO 25228 --- [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-05-28 17:15:53.806  INFO 25228 --- [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
+2025-05-28 17:15:53.899  INFO 25228 --- [http-nio-8080-exec-1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-05-28 17:15:54.079  INFO 25228 --- [http-nio-8080-exec-1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-05-28 17:15:54.082 DEBUG 25228 --- [http-nio-8080-exec-1] o.c.crud.mapper.AwardMapper.selectList   : ==>  Preparing: SELECT id,name,quantity,prize FROM award
+2025-05-28 17:15:54.096 DEBUG 25228 --- [http-nio-8080-exec-1] o.c.crud.mapper.AwardMapper.selectList   : ==> Parameters: 
+2025-05-28 17:15:54.112 DEBUG 25228 --- [http-nio-8080-exec-1] o.c.crud.mapper.AwardMapper.selectList   : <==      Total: 5
+2025-05-28 17:15:54.164 DEBUG 25228 --- [http-nio-8080-exec-4] o.c.c.m.A.selectAwardRecord              : ==>  Preparing: select * from award_record where user_id = ?
+2025-05-28 17:15:54.164 DEBUG 25228 --- [http-nio-8080-exec-4] o.c.c.m.A.selectAwardRecord              : ==> Parameters: 3(Long)
+2025-05-28 17:15:54.168 DEBUG 25228 --- [http-nio-8080-exec-4] o.c.c.m.A.selectAwardRecord              : <==      Total: 7
+2025-05-28 17:16:02.724  WARN 25228 --- [http-nio-8080-exec-6] c.b.m.c.t.support.ReflectLambdaMeta      : Unable to make field private final java.lang.Class java.lang.invoke.SerializedLambda.capturingClass accessible: module java.base does not "opens java.lang.invoke" to unnamed module @7714e963
+2025-05-28 17:16:02.728 DEBUG 25228 --- [http-nio-8080-exec-6] o.c.c.mapper.UserLoginMapper.selectList  : ==>  Preparing: SELECT id,username,password,phone,create_time,update_time,status,balance FROM user_login WHERE (username = ?)
+2025-05-28 17:16:02.728 DEBUG 25228 --- [http-nio-8080-exec-6] o.c.c.mapper.UserLoginMapper.selectList  : ==> Parameters: hope(String)
+2025-05-28 17:16:02.732 DEBUG 25228 --- [http-nio-8080-exec-6] o.c.c.mapper.UserLoginMapper.selectList  : <==      Total: 1
+2025-05-28 17:16:12.841  INFO 25228 --- [http-nio-8080-exec-8] org.chy.crud.controller.AwardController  : 开始抽奖，接收到的token: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2VyIjozLCJleHAiOjE3NDg0MjU1NjJ9.nosVwVXXyriqsyVUrVY_ljbowmNSC9fgi_ceQlOBoOj0GTGyRpjGSHPQbnStYFXtcubJGfYxZFKUh9GQnVm1L9Q-yWWMsAbd5U68UW6y_0h4As4bv_PfJUSIUhLt-zF3noNhcY6NRluNxUIuFmrIlrS3EgfasOhrkJzoMMuEiS7fKc0S15dFSRuBwWG5okEVIGFd44FKDrncATqYIlB7ZJP69kwIzVHqKg_VDrDPd8ZH6bIv_m-F5BDl6o8WB7YYo0O5iJ5AISn1RW58GVh339FBzpPiKEW_TkQVBLYksYXm2xCnhrgmGK9wbkrUAA3PgCZuqirHXdb-KvEg904LFQ
+2025-05-28 17:16:12.859  INFO 25228 --- [http-nio-8080-exec-8] org.chy.crud.controller.AwardController  : 解析出的userId: 3
+2025-05-28 17:16:12.859  INFO 25228 --- [http-nio-8080-exec-8] o.c.crud.service.impl.AwardServiceImpl   : 开始处理用户3的抽奖请求
+2025-05-28 17:16:12.860 DEBUG 25228 --- [http-nio-8080-exec-8] o.c.c.mapper.UserLoginMapper.selectList  : ==>  Preparing: SELECT id,username,password,phone,create_time,update_time,status,balance FROM user_login WHERE (id = ?)
+2025-05-28 17:16:12.860 DEBUG 25228 --- [http-nio-8080-exec-8] o.c.c.mapper.UserLoginMapper.selectList  : ==> Parameters: 3(Long)
+2025-05-28 17:16:12.862 DEBUG 25228 --- [http-nio-8080-exec-8] o.c.c.mapper.UserLoginMapper.selectList  : <==      Total: 1
+2025-05-28 17:16:12.862  INFO 25228 --- [http-nio-8080-exec-8] o.c.crud.service.impl.AwardServiceImpl   : 查询到的用户信息: UserLogin{serialVersionUID = , id = 3, username = Hope, password = $2a$10$6ptTq3V9XfaJmFYwYT2W9ud377BUkEWk.whf.iQ.0sX5F.L497rAC, phone = 13900112222, createTime = 2017-08-19T22:37:44, updateTime = 2017-08-19T22:37:44, status = NORMAL, balance = 1000000}
+2025-05-28 17:16:12.867 DEBUG 25228 --- [http-nio-8080-exec-8] o.c.crud.mapper.AwardMapper.selectList   : ==>  Preparing: SELECT id,name,quantity,prize FROM award WHERE (quantity > ?)
+2025-05-28 17:16:12.867 DEBUG 25228 --- [http-nio-8080-exec-8] o.c.crud.mapper.AwardMapper.selectList   : ==> Parameters: 0(Integer)
+2025-05-28 17:16:12.867 DEBUG 25228 --- [http-nio-8080-exec-8] o.c.crud.mapper.AwardMapper.selectList   : <==      Total: 5
+2025-05-28 17:16:12.867  INFO 25228 --- [http-nio-8080-exec-8] o.c.crud.service.impl.AwardServiceImpl   : 当前可用奖品列表: [Award(id=1, name=特等奖, quantity=17, prize=布加迪威龙一辆), Award(id=2, name=一等奖, quantity=25, prize=宝马一辆), Award(id=3, name=二等奖, quantity=31, prize=苹果16PM), Award(id=4, name=三等奖, quantity=47, prize=vivo x200u), Award(id=5, name=幸运奖, quantity=62, prize=气球一个)]
+2025-05-28 17:16:12.873 DEBUG 25228 --- [http-nio-8080-exec-8] org.chy.crud.mapper.AwardMapper.update   : ==>  Preparing: UPDATE award SET quantity = quantity - 1 WHERE (id = ? AND quantity > ?)
+2025-05-28 17:16:12.873 DEBUG 25228 --- [http-nio-8080-exec-8] org.chy.crud.mapper.AwardMapper.update   : ==> Parameters: 3(Integer), 0(Integer)
+2025-05-28 17:16:12.879 DEBUG 25228 --- [http-nio-8080-exec-8] org.chy.crud.mapper.AwardMapper.update   : <==    Updates: 1
+2025-05-28 17:16:12.880 DEBUG 25228 --- [http-nio-8080-exec-8] o.c.c.mapper.AwardRecordMapper.insert    : ==>  Preparing: INSERT INTO award_record ( user_id, user_name, award_id, award_name, prize, create_time ) VALUES ( ?, ?, ?, ?, ?, ? )
+2025-05-28 17:16:12.881 DEBUG 25228 --- [http-nio-8080-exec-8] o.c.c.mapper.AwardRecordMapper.insert    : ==> Parameters: 3(Long), Hope(String), 3(Integer), 二等奖(String), 苹果16PM(String), 2025-05-28T17:16:12.879822200(LocalDateTime)
+2025-05-28 17:16:12.885 DEBUG 25228 --- [http-nio-8080-exec-8] o.c.c.mapper.AwardRecordMapper.insert    : <==    Updates: 1
+2025-05-28 17:16:12.887  INFO 25228 --- [http-nio-8080-exec-8] org.chy.crud.controller.AwardController  : 抽奖结果: 恭喜Hope抽到二等奖:苹果16PM!
+2025-05-28 17:16:12.894 DEBUG 25228 --- [http-nio-8080-exec-3] o.c.c.m.A.selectAwardRecord              : ==>  Preparing: select * from award_record where user_id = ?
+2025-05-28 17:16:12.894 DEBUG 25228 --- [http-nio-8080-exec-3] o.c.c.m.A.selectAwardRecord              : ==> Parameters: 3(Long)
+2025-05-28 17:16:12.895 DEBUG 25228 --- [http-nio-8080-exec-3] o.c.c.m.A.selectAwardRecord              : <==      Total: 8
+2025-05-28 17:16:12.904 DEBUG 25228 --- [http-nio-8080-exec-10] o.c.crud.mapper.AwardMapper.selectList   : ==>  Preparing: SELECT id,name,quantity,prize FROM award
+2025-05-28 17:16:12.904 DEBUG 25228 --- [http-nio-8080-exec-10] o.c.crud.mapper.AwardMapper.selectList   : ==> Parameters: 
+2025-05-28 17:16:12.904 DEBUG 25228 --- [http-nio-8080-exec-10] o.c.crud.mapper.AwardMapper.selectList   : <==      Total: 5
