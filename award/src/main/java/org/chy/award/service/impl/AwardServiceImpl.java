@@ -13,6 +13,7 @@ import org.chy.awardrecord.mapper.AwardRecordMapper;
 import org.chy.awardrecord.pojo.AwardRecord;
 import org.chy.login.pojo.UserLogin;
 import org.chy.login.service.UserLoginService;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
@@ -23,7 +24,7 @@ import java.util.Random;
 @Service
 @RequiredArgsConstructor
 public class AwardServiceImpl extends ServiceImpl<AwardMapper, Award> implements AwardService {
-
+    private final RabbitTemplate rabbitTemplate;
     private final Random random = new Random();
     @Autowired
     private  UserLoginService userLoginService; // 用于获取用户信息、
@@ -93,7 +94,9 @@ public class AwardServiceImpl extends ServiceImpl<AwardMapper, Award> implements
                 awardRecord.setCreateTime(LocalDateTime.now());
 
                 awardRecordMapper.insert(awardRecord);
-
+                // 5. 发送消息到消息队列
+                rabbitTemplate.convertAndSend("draw.topic", "draw.success", awardRecord);
+                log.info("用户{}抽中奖品{}，已发送消息到RabbitMQ", userId, selectedAward.getName());
                 return "恭喜" + user.getUsername() + "抽到" +
                         selectedAward.getName() + ":" + selectedAward.getPrize() + "!";
             }
