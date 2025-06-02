@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import UserView from '../views/UserView.vue'
 import RegisterView from '../views/RegisterView.vue'
 
-
 const routes = [
     {
         path: '/',
@@ -45,7 +44,8 @@ const router = createRouter({
 // 路由守卫
 // router/index.ts
 router.beforeEach((to) => {
-    const isAuth = !!localStorage.getItem('token')
+    const auth = localStorage.getItem('auth')
+    const isAuth = !!auth
 
     // 需要登录但未认证 → 跳登录页
     if (to.meta.requiresAuth && !isAuth) {
@@ -54,9 +54,9 @@ router.beforeEach((to) => {
             query: { redirect: to.fullPath }
         }
     }
-    // 已登录时访问登录页 → 跳首页
+    // 已登录时访问登录页 → 跳用户页面
     if (to.path === '/home/login' && isAuth) {
-        return '/users'
+        return '/home/users'
     }
 })
 export default router

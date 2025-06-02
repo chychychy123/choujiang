@@ -1,6 +1,5 @@
 <template>
   <router-view></router-view>
-  <UserView />
 </template>
 
 <script lang="ts">
